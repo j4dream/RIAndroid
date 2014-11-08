@@ -4,16 +4,24 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+
+import com.j4dream.riandroid.view.SildingMenu;
 
 
 public class MainActivity extends Activity {
 
+    private SildingMenu mLeftMenu;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mLeftMenu = (SildingMenu)findViewById(R.id.id_menu);
     }
 
+    public void toggleMemu(View view){
+        mLeftMenu.toggle();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

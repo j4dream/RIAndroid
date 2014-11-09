@@ -10,6 +10,7 @@
         <RelativeLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:onClick="clickLeftMemuItem"
             android:padding="10dp">
             <ImageView
                 android:id="@+id/id_img1"
@@ -33,7 +34,8 @@
         <RelativeLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:padding="10dp">
+            android:padding="10dp"
+            android:onClick="clickLeftMemuItem">
             <ImageView
                 android:id="@+id/id_img2"
                 android:layout_width="50dp"
@@ -56,6 +58,7 @@
         <RelativeLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:onClick="clickLeftMemuItem"
             android:padding="10dp">
             <ImageView
                 android:id="@+id/id_img3"
@@ -79,6 +82,7 @@
         <RelativeLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:onClick="clickLeftMemuItem"
             android:padding="10dp">
             <ImageView
                 android:id="@+id/id_img4"
@@ -102,6 +106,7 @@
         <RelativeLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:onClick="clickLeftMemuItem"
             android:padding="10dp">
             <ImageView
                 android:id="@+id/id_img5"
@@ -122,5 +127,10 @@
                 android:layout_centerVertical="true"
                 />
         </RelativeLayout>
+        <ExpandableListView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
+
+            </ExpandableListView>
         </LinearLayout>
 </RelativeLayout>

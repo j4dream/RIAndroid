@@ -6,13 +6,16 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
+import android.widget.ExpandableListView;
 
+import com.j4dream.riandroid.view.DBList;
 import com.j4dream.riandroid.view.SildingMenu;
 
 
 public class MainActivity extends Activity {
 
     private SildingMenu mLeftMenu;
+    private DBList dbListMenu;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

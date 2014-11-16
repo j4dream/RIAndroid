@@ -1,17 +1,24 @@
 package com.j4dream.riandroid.service;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOError;
+import java.io.IOException;
+
 /**
  * Created by Dream on 2014/11/11.
  */
-public class WebRequest extends AsyncTask<Void, Void, Boolean> {
+public class WebRequest extends AsyncTask<Void, Void, JSONObject> {
+
     private JSONObject response = null;
     private JSONObject request;
     private String url;
+    public WebCallback callback = null;
+
     public WebRequest() {
 
     }
@@ -19,6 +26,7 @@ public class WebRequest extends AsyncTask<Void, Void, Boolean> {
     public WebRequest(JSONObject request, String url) {
         this.request = request;
         this.url = url;
+        this.execute();
     }
 
     @Override
@@ -27,33 +35,23 @@ public class WebRequest extends AsyncTask<Void, Void, Boolean> {
     }
 
     @Override
-    protected Boolean doInBackground(Void... params) {
+    protected JSONObject doInBackground(Void... params){
         // TODO: attempt authentication against a network service.
-
-        WebService web = new WebService();
+        JSONObject resutl = null;
         try {
-            response = web.doPost(request, url);
-            if (response.getInt("code") == 1) {
-                return true;
-            } else if (response.getInt("code") == 0) {
-                return false;
-            }
-        } catch (JSONException e) {
+            resutl = new WebService().getHttps();
+        } catch (Exception e) {
             e.printStackTrace();
         }
-
-
-        // TODO: register the new account here.
-        return false;
+        return resutl;
     }
 
     @Override
-    protected void onPostExecute(Boolean aBoolean) {
-
+    protected void onPostExecute(JSONObject jsonObject) {
+        callback.finishRequest(jsonObject);
     }
 
     @Override
     protected void onCancelled() {
     }
-
 }

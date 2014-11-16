@@ -5,5 +5,4 @@ package com.j4dream.riandroid.constants;
  */
 public class ServerConstants {
     public static String HOST_NAME="https://app.rimanggis.com/manggis_web/";
-
 }

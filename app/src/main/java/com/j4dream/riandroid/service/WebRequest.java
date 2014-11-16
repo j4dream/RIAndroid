@@ -39,7 +39,7 @@ public class WebRequest extends AsyncTask<Void, Void, JSONObject> {
         // TODO: attempt authentication against a network service.
         JSONObject resutl = null;
         try {
-            resutl = new WebService().getHttps();
+            resutl = new WebService().doPost(request, url);
         } catch (Exception e) {
             e.printStackTrace();
         }

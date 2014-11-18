@@ -1,6 +1,7 @@
 package com.j4dream.riandroid;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -49,7 +50,7 @@ public class LoginActivity extends Activity implements WebCallback {
             try {
                 requestJSON.put("j_username", "dream.long@radicasys.com");
                 requestJSON.put("j_password", "123");
-                WebRequest req = new WebRequest(requestJSON, "j_spring_security_check.json?csrf_token=");
+                WebRequest req = new WebRequest(getApplicationContext(), requestJSON, "j_spring_security_check.json?csrf_token=", "post");
                 req.callback = LoginActivity.this;
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -62,7 +63,8 @@ public class LoginActivity extends Activity implements WebCallback {
         btnForgotPass.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new NetPing().execute();
+                WebRequest req = new WebRequest(getApplicationContext(), null, "lists/5465ba78e4b0a90bb0a0cd09/campaigns.json","get");
+                req.callback = LoginActivity.this;
             }
         });
     }

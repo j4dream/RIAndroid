@@ -14,7 +14,6 @@ import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
 import org.apache.http.conn.ssl.SSLSocketFactory;
-import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
@@ -59,42 +58,22 @@ public class WebService {
         //http://stackoverflow.com/questions/16719959/android-ssl-httpget-no-peer-certificate-error-or-connection-closed-by-peer-e
         JSONObject result = null;
         String requestUrl = ServerConstants.HOST_NAME + url;
-
-        SSLContext ctx = SSLContext.getInstance("TLS");
-        ctx.init(null, new TrustManager[] { new CustomX509TrustManager() },
-                new SecureRandom());
-        HttpClient client = new DefaultHttpClient();
-        SSLSocketFactory ssf = new CustomSSLSocketFactory(ctx);
-        ssf.setHostnameVerifier(SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
-        ClientConnectionManager ccm = client.getConnectionManager();
-        SchemeRegistry sr = ccm.getSchemeRegistry();
-        sr.register(new Scheme("https", ssf, 443));
-        DefaultHttpClient sslClient = new DefaultHttpClient(ccm,
-                client.getParams());
         HttpPost request = new HttpPost(requestUrl);
-       /* request.addHeader("Content-Type", "application/json");
-        request.addHeader("Accept", "application/json");
-        request.addHeader("X-Requested-With","XMLHttpRequest");*/
 
         List formParams = new ArrayList();
-
-        formParams.add(new BasicNameValuePair("j_username", "765993602@qq.com"));
-
-        formParams.add(new BasicNameValuePair("j_password", "Longfncal123"));
-
+        formParams.add(new BasicNameValuePair("j_username", requestJSON.getString("j_username")));
+        formParams.add(new BasicNameValuePair("j_password", requestJSON.getString("j_password")));
         HttpEntity entity = new UrlEncodedFormEntity(formParams, "UTF-8");
 
-        StringEntity se = new StringEntity(requestJSON.toString());
-        System.out.println(requestJSON.toString());
         request.setEntity(entity);
-        HttpResponse httpResponse = sslClient.execute(request);
+        HttpResponse httpResponse = getSSLClient().execute(request);
         Header[] cookies = httpResponse.getHeaders("Set-Cookie");
         String cookieStr = "";
         for (int i = 0; i < cookies.length; i++) {
             Header cookie = cookies[i];
             String cookieVal = cookie.getValue().split(";")[0];
             if(cookieVal.contains("csrf_token")){
-                util.setCsrf(context,cookieVal);
+                util.setCsrf(context, cookieVal);
             }
             cookieStr = cookieVal + ";" + cookieStr;
         }
@@ -110,6 +89,19 @@ public class WebService {
         JSONObject result = null;
         String requestUrl = ServerConstants.HOST_NAME + url;
 
+        HttpGet request = new HttpGet(requestUrl);
+        request.addHeader("Cookie", util.getCookies(context));
+        request.addHeader("Content-Type", "application/json");
+        /*request.addHeader("Accept", "application/json");
+        request.addHeader("X-Requested-With","XMLHttpRequest");*/
+
+        HttpResponse httpResponse = getSSLClient().execute(request);
+        String retSrc = EntityUtils.toString(httpResponse.getEntity());
+        result = new JSONObject(retSrc);
+        return result;
+    }
+
+    private DefaultHttpClient getSSLClient() throws Exception{
         SSLContext ctx = SSLContext.getInstance("TLS");
         ctx.init(null, new TrustManager[] { new CustomX509TrustManager() },
                 new SecureRandom());
@@ -121,19 +113,10 @@ public class WebService {
         sr.register(new Scheme("https", ssf, 443));
         DefaultHttpClient sslClient = new DefaultHttpClient(ccm,
                 client.getParams());
-        HttpGet request = new HttpGet(requestUrl);
-        request.addHeader("Cookie",util.getCookies(context));
-        request.addHeader("Content-Type", "application/json");
-        /*request.addHeader("Accept", "application/json");
-        request.addHeader("X-Requested-With","XMLHttpRequest");*/
-
-        HttpResponse httpResponse = sslClient.execute(request);
-        String retSrc = EntityUtils.toString(httpResponse.getEntity());
-        result = new JSONObject(retSrc);
-        return result;
+        return sslClient;
     }
 
-    public class CustomSSLSocketFactory extends SSLSocketFactory {
+    private class CustomSSLSocketFactory extends SSLSocketFactory {
         SSLContext sslContext = SSLContext.getInstance("TLS");
         public CustomSSLSocketFactory(KeyStore truststore)
                 throws NoSuchAlgorithmException, KeyManagementException,
@@ -163,7 +146,7 @@ public class WebService {
         }
     }
 
-    public class CustomX509TrustManager implements X509TrustManager {
+    private class CustomX509TrustManager implements X509TrustManager {
 
         @Override
         public void checkClientTrusted(X509Certificate[] chain, String authType)
